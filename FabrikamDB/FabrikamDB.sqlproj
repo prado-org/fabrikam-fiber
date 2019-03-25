@@ -119,6 +119,7 @@
     <None Include="Publish\FabrikamDB.publish.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="FabrikamDB.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="FabrikamDB.refactorlog" />
