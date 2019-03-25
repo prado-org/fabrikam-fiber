@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetCustomerById]
+	@CustomerId INT
 AS
 	SELECT
 		[ID],
@@ -9,6 +10,8 @@ AS
 		[Address_State],
 		[Address_Zip]  
 	FROM 
-		[$(TableName)]
+		dbo.Customers
+	WHERE
+		ID = @CustomerId
 	ORDER BY 
-		[$(OrderBy)]
+		ID

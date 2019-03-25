@@ -9,9 +9,6 @@ AS
 		[Address_State],
 		[Address_Zip] 
 	FROM 
-		[$(TableName)]
+		dbo.Customers
 	ORDER BY 
-		[$(OrderBy)]
-
-	declare @teste varchar(max)
-	set @teste ='Testes [$(TableName)]'
+		ID
