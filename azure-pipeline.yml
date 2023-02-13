@@ -83,16 +83,16 @@ stages:
   jobs:
   - deployment: DeployWeb
     displayName: deploy Web App
-    environment: 'QA'
+    environment: 
+      name: 'QA'
+      resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:
           steps:
-          - script: echo HOSTNAME
           - task: Tokenizer@2
             inputs:
               SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
-
           - task: IISWebAppManagementOnMachineGroup@0
             displayName: 'IIS Web App Manage'
             inputs:
@@ -114,7 +114,9 @@ stages:
   jobs:
   - deployment: DeployWeb
     displayName: deploy Web App
-    environment: 'PRD'
+    environment: 
+      name: 'PRD'
+      resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:
