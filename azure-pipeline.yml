@@ -80,6 +80,8 @@ stages:
 
 - stage: QA
   dependsOn: build
+  variables:
+    - group: vg-Fabrikam-DEV
   jobs:
   - deployment: DeployWeb
     displayName: deploy Web App
@@ -131,6 +133,8 @@ stages:
 
 - stage: prod
   dependsOn: QA
+  variables:
+    - group: vg-Fabrikam-PRD
   jobs:
   - deployment: DeployWeb
     displayName: deploy Web App
