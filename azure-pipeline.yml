@@ -125,7 +125,7 @@ stages:
               TaskType: 'dacpac'
               DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
               TargetMethod: 'connectionString'
-              ConnectionString: '$(FabrikamFiber-Express)'
+              ConnectionString: '$(FabrikamFiber-Express-ConnString)'
 
 - stage: prod
   dependsOn: qa
@@ -174,4 +174,4 @@ stages:
               TaskType: 'dacpac'
               DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
               TargetMethod: 'connectionString'
-              ConnectionString: '$(FabrikamFiber-Express)'
+              ConnectionString: '$(FabrikamFiber-Express-ConnString)'
