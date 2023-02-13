@@ -89,16 +89,12 @@ stages:
       runOnce:
         deploy:
           steps:
-          - checkout: self 
           - script: echo my first deployment
           - task: PowerShell@2
             inputs:
               targetType: 'inline'
               script: |
-                # Write your PowerShell commands here.
-                Write-Host "Pipeline Workspace: $(Pipeline.Workspace)"
-                Write-Host $(Environment.Name)
-                # Write-Host $(Strategy.Name)
+                Get-ComputerInfo
 
 - stage: prod
   dependsOn: QA
@@ -110,13 +106,9 @@ stages:
       runOnce:
         deploy:
           steps:
-          - checkout: self 
           - script: echo my first deployment
           - task: PowerShell@2
             inputs:
               targetType: 'inline'
               script: |
-                # Write your PowerShell commands here.
-                Write-Host "Pipeline Workspace: $(Pipeline.Workspace)"
-                Write-Host $(Environment.Name)
-                # Write-Host $(Strategy.Name)
+                Get-ComputerInfo
