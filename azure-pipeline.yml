@@ -117,6 +117,18 @@ stages:
               SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
               TakeAppOfflineFlag: true
 
+          - task: SqlDacpacDeploymentOnMachineGroup@0
+            displayName: 'Deploy using : dacpac'
+            inputs:
+              TaskType: 'dacpac'
+              DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
+              TargetMethod: 'server'
+              ServerName: 'LEADRO-2022\SQLEXPRESS'
+              DatabaseName: 'FabrikamFiber-DEV'
+              AuthScheme: 'sqlServerAuthentication'
+              SqlUsername: 'FabrikamFiber-DB'
+              SqlPassword: 'P@ssw0rd'
+
 - stage: prod
   dependsOn: QA
   jobs:
@@ -155,3 +167,15 @@ stages:
               Package: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.zip'
               SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
               TakeAppOfflineFlag: true
+          
+          - task: SqlDacpacDeploymentOnMachineGroup@0
+            displayName: 'Deploy using : dacpac'
+            inputs:
+              TaskType: 'dacpac'
+              DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
+              TargetMethod: 'server'
+              ServerName: 'LEADRO-2022\SQLEXPRESS'
+              DatabaseName: 'FabrikamFiber-PRD'
+              AuthScheme: 'sqlServerAuthentication'
+              SqlUsername: 'FabrikamFiber-DB'
+              SqlPassword: 'P@ssw0rd'
