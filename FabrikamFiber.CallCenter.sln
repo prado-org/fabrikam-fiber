@@ -37,6 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service Definitions", "Serv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3B160C3A-0040-46E2-97B5-D707FFCD23E3}"
 	ProjectSection(SolutionItems) = preProject
+		azure-pipeline.yml = azure-pipeline.yml
 		RemoteController.testsettings = RemoteController.testsettings
 		TestSettings.testsettings = TestSettings.testsettings
 	EndProjectSection

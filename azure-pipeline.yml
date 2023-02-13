@@ -1,0 +1,73 @@
+name: $(BuildDefinitionName)-$(date:yyyyMMdd)$(rev:.r)
+
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+  
+steps:
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '**\*.sln'
+
+- task: VSBuild@1
+  displayName: 'Build solution'
+  inputs:
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: VSTest@2
+  displayName: 'Test Assemblies'
+  inputs:
+    testAssemblyVer2: |
+        **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
+        !**\obj\**
+    testFiltercriteria: 'TestCategory=Required'
+    codeCoverageEnabled: true
+    testRunTitle: '$(Build.DefinitionName)'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    diagnosticsEnabled: True
+
+- task: CopyFiles@2
+  displayName: 'Copy Files DACPAC'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: 'FabrikamFiber.Database\bin\**\*.dacpac'
+    TargetFolder: '$(build.artifactstagingdirectory)\DACPAC'
+    OverWrite: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Files Selenium'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: |
+        FabrikamFiber.Web.PureSeleniumTests\bin\**\*
+        **\*.testsettings
+        **\*.runsettings
+    TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
+    OverWrite: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact WebApp'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)\WebDeploy'
+    ArtifactName: WebApp
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact DacPac'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)\DACPAC'
+    ArtifactName: DacPac
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact Selenium'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
+    ArtifactName: Selenium
