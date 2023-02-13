@@ -11,7 +11,8 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: run_build
+  - job: build
+    displayName: run build and test
     steps:
     - task: NuGetCommand@2
       displayName: 'NuGet restore'
@@ -84,7 +85,7 @@ stages:
     - group: vg-Fabrikam-DEV
   jobs:
   - deployment: DeployWeb
-    displayName: deploy Web App
+    displayName: deploy to qa
     environment: 
       name: 'QA'
       resourceType: VirtualMachine
@@ -146,7 +147,7 @@ stages:
     - group: vg-Fabrikam-PRD
   jobs:
   - deployment: DeployWeb
-    displayName: deploy Web App
+    displayName: deploy to prd
     environment: 
       name: 'PRD'
       resourceType: VirtualMachine
