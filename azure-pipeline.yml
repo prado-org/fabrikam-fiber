@@ -18,6 +18,7 @@ steps:
 - task: VSBuild@1
   displayName: 'Build solution'
   inputs:
+    solution: '**\*.sln'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
@@ -25,15 +26,17 @@ steps:
 - task: VSTest@2
   displayName: 'Test Assemblies'
   inputs:
+    testSelector: 'testAssemblies'
     testAssemblyVer2: |
-        **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
-        !**\obj\**
+      **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
     testFiltercriteria: 'TestCategory=Required'
     codeCoverageEnabled: true
     testRunTitle: '$(Build.DefinitionName)'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
-    diagnosticsEnabled: True
+    diagnosticsEnabled: true
 
 - task: CopyFiles@2
   displayName: 'Copy Files DACPAC'
@@ -48,9 +51,9 @@ steps:
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: |
-        FabrikamFiber.Web.PureSeleniumTests\bin\**\*
-        **\*.testsettings
-        **\*.runsettings
+      FabrikamFiber.Web.PureSeleniumTests\bin\**\*
+      **\*.testsettings
+      **\*.runsettings
     TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
     OverWrite: true
 
