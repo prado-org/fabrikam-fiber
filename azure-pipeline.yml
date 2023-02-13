@@ -125,7 +125,7 @@ stages:
               TaskType: 'dacpac'
               DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
               TargetMethod: 'connectionString'
-              ConnectionString: 'data source=LEADRO-2022\SQLEXPRESS;Initial Catalog=FabrikamFiber-DEV; User ID=FabrikamFiber-DB; Password=#P@ssw0rd1234#; Use Encryption for Data=Optional;'
+              ConnectionString: 'data source=LEADRO-2022\SQLEXPRESS;Initial Catalog=FabrikamFiber-DEV; User ID=FabrikamFiber-DB; Password=#P@ssw0rd1234#; Trust Server Certificate=true'
 
 - stage: prod
   dependsOn: qa
