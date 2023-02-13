@@ -109,6 +109,14 @@ stages:
               PipeLineModeForWebsite: 'Integrated'
               AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
 
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'IIS Web App Deploy'
+            inputs:
+              WebSiteName: 'FabrikamFiber-DEV'
+              Package: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.zip'
+              SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+              TakeAppOfflineFlag: true
+
 - stage: prod
   dependsOn: QA
   jobs:
