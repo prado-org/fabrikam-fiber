@@ -78,7 +78,7 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
         ArtifactName: Selenium
 
-- stage: QA
+- stage: qa
   dependsOn: build
   variables:
     - group: vg-Fabrikam-DEV
@@ -132,7 +132,7 @@ stages:
               SqlPassword: 'P@ssw0rd'
 
 - stage: prod
-  dependsOn: QA
+  dependsOn: qa
   variables:
     - group: vg-Fabrikam-PRD
   jobs:
