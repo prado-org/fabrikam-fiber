@@ -134,7 +134,8 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host "Create SQL script"
-                C:\Program Files\Microsoft SQL Server\160\DAC\bin\SqlPackage.exe /a:script /SourceFile:$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac /TargetConnectionString:$(FabrikamFiber-Express-ConnString) /OutputPath:$(Pipeline.Workspace)/SQL_DEV
+                cd  'C:\Program Files\Microsoft SQL Server\160\DAC\bin'
+                SqlPackage.exe /a:script /SourceFile:$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac /TargetConnectionString:$(FabrikamFiber-Express-ConnString) /OutputPath:$(Pipeline.Workspace)/SQL_DEV
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: '$(Pipeline.Workspace)/SQL_DEV'
