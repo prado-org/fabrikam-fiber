@@ -2,72 +2,192 @@ name: $(BuildDefinitionName)-$(date:yyyyMMdd)$(rev:.r)
 
 trigger: none
 
-pool:
-  vmImage: 'windows-latest'
-
 variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
-  
-steps:
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    restoreSolution: '**\*.sln'
 
-- task: VSBuild@1
-  displayName: 'Build solution'
-  inputs:
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+stages:
+- stage: build
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: build
+    displayName: run build and test
+    steps:
+    - task: NuGetCommand@2
+      displayName: 'NuGet restore'
+      inputs:
+        restoreSolution: '**\*.sln'
 
-- task: VSTest@2
-  displayName: 'Test Assemblies'
-  inputs:
-    testAssemblyVer2: |
-        **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
-        !**\obj\**
-    testFiltercriteria: 'TestCategory=Required'
-    codeCoverageEnabled: true
-    testRunTitle: '$(Build.DefinitionName)'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
-    diagnosticsEnabled: True
+    - task: VSBuild@1
+      displayName: 'Build solution'
+      inputs:
+        solution: '**\*.sln'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
+        platform: '$(BuildPlatform)'
+        configuration: '$(BuildConfiguration)'
 
-- task: CopyFiles@2
-  displayName: 'Copy Files DACPAC'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: 'FabrikamFiber.Database\bin\**\*.dacpac'
-    TargetFolder: '$(build.artifactstagingdirectory)\DACPAC'
-    OverWrite: true
+    - task: VSTest@2
+      displayName: 'Test Assemblies'
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: |
+          **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
+          !**\obj\**
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        testFiltercriteria: 'TestCategory=Required'
+        codeCoverageEnabled: true
+        testRunTitle: '$(Build.DefinitionName)'
+        platform: '$(BuildPlatform)'
+        configuration: '$(BuildConfiguration)'
+        diagnosticsEnabled: true
 
-- task: CopyFiles@2
-  displayName: 'Copy Files Selenium'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: |
-        FabrikamFiber.Web.PureSeleniumTests\bin\**\*
-        **\*.testsettings
-        **\*.runsettings
-    TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
-    OverWrite: true
+    - task: CopyFiles@2
+      displayName: 'Copy Files DACPAC'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: 'FabrikamFiber.Database\bin\**\*.dacpac'
+        TargetFolder: '$(build.artifactstagingdirectory)\DACPAC'
+        OverWrite: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact WebApp'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\WebDeploy'
-    ArtifactName: WebApp
+    - task: CopyFiles@2
+      displayName: 'Copy Files Selenium'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+          FabrikamFiber.Web.PureSeleniumTests\bin\**\*
+          **\*.testsettings
+          **\*.runsettings
+        TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
+        OverWrite: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact DacPac'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\DACPAC'
-    ArtifactName: DacPac
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact WebApp'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\WebDeploy'
+        ArtifactName: WebApp
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact Selenium'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
-    ArtifactName: Selenium
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact DacPac'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\DACPAC'
+        ArtifactName: DacPac
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Selenium'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
+        ArtifactName: Selenium
+
+- stage: qa
+  dependsOn: build
+  variables:
+    - group: vg-Fabrikam-DEV
+  jobs:
+  - deployment: DeployWeb
+    displayName: deploy to qa
+    environment: 
+      name: 'QA'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Tokenizer@2
+            inputs:
+              SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+          - task: IISWebAppManagementOnMachineGroup@0
+            displayName: 'IIS Web App Manage'
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'FabrikamFiber-DEV'
+              WebsitePhysicalPath: '%SystemDrive%\inetpub\wwwroot\FabrikamFiber-DEV'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              AddBinding: true
+              Bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"8080","hostname":"","sslThumbprint":"","sniFlag":false}]}'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'AppPool-FabrikamFiber-DEV'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'IIS Web App Deploy'
+            inputs:
+              WebSiteName: 'FabrikamFiber-DEV'
+              Package: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.zip'
+              SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+              TakeAppOfflineFlag: true
+
+          - task: SqlDacpacDeploymentOnMachineGroup@0
+            displayName: 'Deploy using : dacpac'
+            inputs:
+              TaskType: 'dacpac'
+              DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
+              TargetMethod: 'connectionString'
+              ConnectionString: '$(FabrikamFiber-Express-ConnString)'
+
+          #- task: PowerShell@2
+          #  displayName: 'Generate SQL Script'
+          #  inputs:
+          #    targetType: 'inline'
+          #    script: |
+          #      Write-Host "Create SQL script"
+          #      cd  'C:\Program Files\Microsoft SQL Server\160\DAC\bin'
+          #      Get-Location
+          #      .\SqlPackage.exe /a:script /SourceFile:$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac /TargetConnectionString:$(FabrikamFiber-Express-ConnString) /OutputPath:$(Pipeline.Workspace)/SQL_DEV
+          #- task: PublishBuildArtifacts@1
+          #  inputs:
+          #    PathtoPublish: '$(Pipeline.Workspace)/SQL_DEV'
+          #    ArtifactName: 'SQL_DEV'
+          #    publishLocation: 'Container'
+
+- stage: prod
+  dependsOn: qa
+  variables:
+    - group: vg-Fabrikam-PRD
+  jobs:
+  - deployment: DeployWeb
+    displayName: deploy to prd
+    environment: 
+      name: 'PRD'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Tokenizer@2
+            inputs:
+              SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+          - task: IISWebAppManagementOnMachineGroup@0
+            displayName: 'IIS Web App Manage'
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'FabrikamFiber-PRD'
+              WebsitePhysicalPath: '%SystemDrive%\inetpub\wwwroot\FabrikamFiber-PRD'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              AddBinding: true
+              Bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"8181","hostname":"","sslThumbprint":"","sniFlag":false}]}'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'AppPool-FabrikamFiber-PRD'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'IIS Web App Deploy'
+            inputs:
+              WebSiteName: 'FabrikamFiber-PRD'
+              Package: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.zip'
+              SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+              TakeAppOfflineFlag: true
+          
+          - task: SqlDacpacDeploymentOnMachineGroup@0
+            displayName: 'Deploy using : dacpac'
+            inputs:
+              TaskType: 'dacpac'
+              DacpacFile: '$(Pipeline.Workspace)/DacPac/FabrikamFiber.Database/bin/Release/FabrikamFiber.Database.dacpac'
+              TargetMethod: 'connectionString'
+              ConnectionString: '$(FabrikamFiber-Express-ConnString)'
