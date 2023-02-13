@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabrikamFiber.Web", "FabrikamFiber.Web\FabrikamFiber.Web.csproj", "{456D6BF0-21B0-4995-9D77-76FA13AD95DA}"
 EndProject
@@ -45,9 +45,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabrikamFiber.Web.PureSelen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabrikamFiber.Web.Tests", "FabrikamFiber.Web.Tests\FabrikamFiber.Web.Tests.csproj", "{2FE8E250-4218-4B31-AB23-D9B91ABD842B}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "FabrikamDB", "FabrikamDB\FabrikamDB.sqlproj", "{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabrikamFiber.WebAndLoadTest", "FabrikamFiber.WebAndLoadTest\FabrikamFiber.WebAndLoadTest.csproj", "{2D4A36D5-9E98-4C1E-A860-D4B65D948F9E}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "FabrikamFiber.Database", "FabrikamFiber.Database\FabrikamFiber.Database.sqlproj", "{066F8CE1-18B4-413D-9418-7B0C6543690F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,16 +71,16 @@ Global
 		{2FE8E250-4218-4B31-AB23-D9B91ABD842B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FE8E250-4218-4B31-AB23-D9B91ABD842B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FE8E250-4218-4B31-AB23-D9B91ABD842B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4FBCD16-2272-4DD2-8E10-7949A6F24C0E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{2D4A36D5-9E98-4C1E-A860-D4B65D948F9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D4A36D5-9E98-4C1E-A860-D4B65D948F9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D4A36D5-9E98-4C1E-A860-D4B65D948F9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D4A36D5-9E98-4C1E-A860-D4B65D948F9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{066F8CE1-18B4-413D-9418-7B0C6543690F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
