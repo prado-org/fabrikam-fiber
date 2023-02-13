@@ -2,15 +2,14 @@ name: $(BuildDefinitionName)-$(date:yyyyMMdd)$(rev:.r)
 
 trigger: none
 
-pool:
-  vmImage: 'windows-latest'
-
 variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
 stages:
 - stage: build
+  pool:
+    vmImage: 'windows-latest'
   jobs:
   - job: run_build
     steps:
@@ -89,7 +88,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: HOSTNAME
+          - script: echo HOSTNAME
           - task: Tokenizer@2
             inputs:
               SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
