@@ -92,7 +92,7 @@ stages:
           - script: HOSTNAME
           - task: Tokenizer@2
             inputs:
-              SourcePath: '$(System.DefaultWorkingDirectory)/_FabrikamFiber.Build/WebApp/FabrikamFiber.Web.SetParameters.xml'
+              SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
 
           - task: IISWebAppManagementOnMachineGroup@0
             displayName: 'IIS Web App Manage'
