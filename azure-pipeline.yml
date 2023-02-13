@@ -8,69 +8,115 @@ pool:
 variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
-  
-steps:
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    restoreSolution: '**\*.sln'
 
-- task: VSBuild@1
-  displayName: 'Build solution'
-  inputs:
-    solution: '**\*.sln'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+stages:
+- stage: build
+  jobs:
+  - job: run_build
+    steps:
+    - task: NuGetCommand@2
+      displayName: 'NuGet restore'
+      inputs:
+        restoreSolution: '**\*.sln'
 
-- task: VSTest@2
-  displayName: 'Test Assemblies'
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    testFiltercriteria: 'TestCategory=Required'
-    codeCoverageEnabled: true
-    testRunTitle: '$(Build.DefinitionName)'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
-    diagnosticsEnabled: true
+    - task: VSBuild@1
+      displayName: 'Build solution'
+      inputs:
+        solution: '**\*.sln'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false'
+        platform: '$(BuildPlatform)'
+        configuration: '$(BuildConfiguration)'
 
-- task: CopyFiles@2
-  displayName: 'Copy Files DACPAC'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: 'FabrikamFiber.Database\bin\**\*.dacpac'
-    TargetFolder: '$(build.artifactstagingdirectory)\DACPAC'
-    OverWrite: true
+    - task: VSTest@2
+      displayName: 'Test Assemblies'
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: |
+          **\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll
+          !**\obj\**
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        testFiltercriteria: 'TestCategory=Required'
+        codeCoverageEnabled: true
+        testRunTitle: '$(Build.DefinitionName)'
+        platform: '$(BuildPlatform)'
+        configuration: '$(BuildConfiguration)'
+        diagnosticsEnabled: true
 
-- task: CopyFiles@2
-  displayName: 'Copy Files Selenium'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: |
-      FabrikamFiber.Web.PureSeleniumTests\bin\**\*
-      **\*.testsettings
-      **\*.runsettings
-    TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
-    OverWrite: true
+    - task: CopyFiles@2
+      displayName: 'Copy Files DACPAC'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: 'FabrikamFiber.Database\bin\**\*.dacpac'
+        TargetFolder: '$(build.artifactstagingdirectory)\DACPAC'
+        OverWrite: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact WebApp'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\WebDeploy'
-    ArtifactName: WebApp
+    - task: CopyFiles@2
+      displayName: 'Copy Files Selenium'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+          FabrikamFiber.Web.PureSeleniumTests\bin\**\*
+          **\*.testsettings
+          **\*.runsettings
+        TargetFolder: '$(build.artifactstagingdirectory)\Selenium'
+        OverWrite: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact DacPac'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\DACPAC'
-    ArtifactName: DacPac
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact WebApp'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\WebDeploy'
+        ArtifactName: WebApp
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact Selenium'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
-    ArtifactName: Selenium
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact DacPac'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\DACPAC'
+        ArtifactName: DacPac
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Selenium'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)\Selenium'
+        ArtifactName: Selenium
+
+- stage: QA
+  dependsOn: build
+  jobs:
+  - deployment: DeployWeb
+    displayName: deploy Web App
+    environment: 'QA'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self 
+          - script: echo my first deployment
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your PowerShell commands here.
+                Write-Host "Pipeline Workspace: $(Pipeline.Workspace)"
+                Write-Host $(Environment.Name)
+                # Write-Host $(Strategy.Name)
+
+- stage: prod
+  dependsOn: QA
+  jobs:
+  - deployment: DeployWeb
+    displayName: deploy Web App
+    environment: 'PRD'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self 
+          - script: echo my first deployment
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your PowerShell commands here.
+                Write-Host "Pipeline Workspace: $(Pipeline.Workspace)"
+                Write-Host $(Environment.Name)
+                # Write-Host $(Strategy.Name)
