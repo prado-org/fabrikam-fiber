@@ -129,7 +129,7 @@ stages:
               DatabaseName: 'FabrikamFiber-DEV'
               AuthScheme: 'sqlServerAuthentication'
               SqlUsername: 'FabrikamFiber-DB'
-              SqlPassword: 'P@ssw0rd'
+              SqlPassword: '#P@ssw0rd1234#'
 
 - stage: prod
   dependsOn: qa
@@ -182,4 +182,4 @@ stages:
               DatabaseName: 'FabrikamFiber-PRD'
               AuthScheme: 'sqlServerAuthentication'
               SqlUsername: 'FabrikamFiber-DB'
-              SqlPassword: 'P@ssw0rd'
+              SqlPassword: '#P@ssw0rd1234#'
