@@ -129,9 +129,29 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo my first deployment
-          - task: PowerShell@2
+          - task: Tokenizer@2
             inputs:
-              targetType: 'inline'
-              script: |
-                Get-ComputerInfo
+              SourcePath: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+          - task: IISWebAppManagementOnMachineGroup@0
+            displayName: 'IIS Web App Manage'
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'FabrikamFiber-PRD'
+              WebsitePhysicalPath: '%SystemDrive%\inetpub\wwwroot\FabrikamFiber-PRD'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              AddBinding: true
+              Bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"8181","hostname":"","sslThumbprint":"","sniFlag":false}]}'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'AppPool-FabrikamFiber-PRD'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'IIS Web App Deploy'
+            inputs:
+              WebSiteName: 'FabrikamFiber-PRD'
+              Package: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.zip'
+              SetParametersFile: '$(Pipeline.Workspace)/WebApp/FabrikamFiber.Web.SetParameters.xml'
+              TakeAppOfflineFlag: true
