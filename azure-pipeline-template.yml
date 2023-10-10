@@ -14,7 +14,7 @@ extends:
   parameters:
     language: 'dotnet'
     poolName: 'windows-latest'
-    testProject: '**/*.Test/*.csproj'
+    testProject: '**\$(BuildConfiguration)\FabrikamFiber.Web.Tests.dll'
     #environments:
     # - name: 'dev'
     #   target: 'azure-webapp'
