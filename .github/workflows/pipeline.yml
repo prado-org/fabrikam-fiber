@@ -26,7 +26,7 @@ jobs:
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
       
-      - name: Check and Create Resource Group
+      - name: Create Resource Group
         run: |
           $rgExists = az group exists --name ${{ env.rgName }}
 
@@ -40,9 +40,8 @@ jobs:
             az group create --name ${{ env.rgName }} --location ${{ env.location }}
           }
 
-      - name: Create Environment
+      - name: Create Service Plan
         run: |
-          Write-Output ""
           Write-Output "Service plan..."
           $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
 
@@ -56,8 +55,8 @@ jobs:
             az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
           }
 
-          Write-Output ""
-          Start-Sleep -Seconds 10
+      - name: Create Web App
+        run: |
           Write-Output "Web App..."
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
 
@@ -71,8 +70,8 @@ jobs:
             az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
           }
 
-          Write-Output ""
-          Start-Sleep -Seconds 10
+      - name: Create SQL Server
+        run: |
           Write-Output "Sql Server..."
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
 
@@ -85,9 +84,9 @@ jobs:
             Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
             az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
           }
-          
-          Write-Output ""
-          Start-Sleep -Seconds 10
+      
+      - name: Create SQL Server database
+        run: |
           Write-Output "Sql Server Database..."
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
 
