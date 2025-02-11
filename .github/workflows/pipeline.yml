@@ -29,11 +29,16 @@ jobs:
         run: |
           & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" "${{ github.workspace }}\WebDeploy\FabrikamFiber.Web.Tests.dll" /TestCaseFilter:"TestCategory=Required" /EnableCodeCoverage
       
+
+      - name: Zip Published Website
+        run: |
+          Compress-Archive -Path "${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web\*" -DestinationPath "${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web.zip"
+
       - name: Archive WebDeploy
         uses: actions/upload-artifact@v4
         with:
           name: _PublishedWebsites
-          path: ${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web\*
+          path: ${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web.zip
 
       - name: Archive DacPac
         uses: actions/upload-artifact@v4
