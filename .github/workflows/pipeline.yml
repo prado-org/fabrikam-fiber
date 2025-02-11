@@ -62,7 +62,11 @@ jobs:
         uses: Azure/login@v2
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
-      
+
+      - name: Deploy DacPac to Azure SQL
+        run: |
+          & "C:\Program Files\Microsoft SQL Server\150\Dac\bin\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
+
       - name: Deploy APP
         uses: azure/webapps-deploy@v3
         with:
@@ -86,7 +90,11 @@ jobs:
         uses: Azure/login@v2
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
-      
+
+      #- name: Deploy DacPac to Azure SQL
+      #  run: |
+      #    & "C:\Program Files\Microsoft SQL Server\150\Dac\bin\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
+
       #- name: Deploy APP
       #  uses: azure/webapps-deploy@v3
       #  with:
