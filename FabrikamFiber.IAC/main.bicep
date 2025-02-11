@@ -68,11 +68,12 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    siteConfig: union(configReference[language],{
+    siteConfig: {
+      netFrameworkVersion: 'v4.8'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'FtpsOnly'
-    })
+    }
     serverFarmId: asp.id
     httpsOnly: true
   }
