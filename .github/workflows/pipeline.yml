@@ -1,9 +1,9 @@
 name: Build, Test and Deploy
 
 on:
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - master
   workflow_dispatch:
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
         run: nuget restore FabrikamFiber.CallCenter.sln
 
       - name: Build Solution
-        run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(System.DefaultWorkingDirectory)\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
+        run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ github.workspace }}\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
 
       - name: Run Tests
         run: |
@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: WebApp
-          path: WebDeploy
+          path: ${{ github.workspace }}\WebDeploy
 
       - name: Archive DACPAC
         uses: actions/upload-artifact@v4
