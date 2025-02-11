@@ -68,7 +68,7 @@ jobs:
         with:
           resource-group-name: rg-fabrikamfiber-qa
           app-name: app-fabrikamfiber-qa
-          package: "WebApp"
+          package: "_PublishedWebsites/FabrikamFiber.Web.zip"
 
   deploy_prod:
     needs: deploy_qa
@@ -92,4 +92,4 @@ jobs:
       #  with:
       #    resource-group-name: rg-fabrikamfiber-qa
       #    app-name: app-fabrikamfiber-qa
-      #    package: "WebApp"
+      #    package: "_PublishedWebsites/FabrikamFiber.Web.zip"
