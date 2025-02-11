@@ -25,12 +25,6 @@ jobs:
       - name: Run Tests
         run: |
           & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" "$($env:GITHUB_WORKSPACE)\FabrikamFiber.Web.Tests\bin\Release\FabrikamFiber.Web.Tests.dll" /TestCaseFilter:"TestCategory=Required" /EnableCodeCoverage
-
-      - name: Run Tests
-        uses: microsoft-approved-actions/vstest@master
-        with:
-          testAssembly: FabrikamFiber.Web.Tests.dll
-          searchFolder: ${{ github.workspace }}\FabrikamFiber.Web.Tests\bin\Release\
       
       - name: Archive WebDeploy
         uses: actions/upload-artifact@v4
