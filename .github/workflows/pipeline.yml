@@ -8,9 +8,11 @@ on:
 
 env:
   rgName: rg-fabrikamfiber-qa
-  location: eastus
+  location: centralus
   appName: app-fabrikamfiber-qa
   planName: asp-fabrikamfiber
+  sqlserverName: sql-fabrikamfiber
+  sqldbName: db-fabrikamfiber
 
 jobs:
   iac:
@@ -45,6 +47,13 @@ jobs:
 
           Write-Output "Creating Web App..."
           az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group  ${{ env.rgName }} --runtime ASPNET:V4.8
+
+          Write-Output "Creating $server in $location..."
+          az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
+          
+          Write-Output "Creating $database on $server..."
+          az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
+
 
       #- name: Deploy Infrastructure using Bicep
       #  run: |
