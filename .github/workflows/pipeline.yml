@@ -10,6 +10,7 @@ env:
   rgName: rg-fabrikamfiber-qa
   location: eastus
   appName: app-fabrikamfiber-qa
+  planName: asp-fabrikamfiber
 
 jobs:
   iac:
@@ -37,9 +38,17 @@ jobs:
             az group create --name ${{ env.rgName }} --location ${{ env.location }}
           }
 
-      - name: Deploy Infrastructure using Bicep
-        run: |
-          az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }}
+      - name: Create Environment
+        run:
+          Write-Output "Creating Service plan..."
+          az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
+
+          Write-Output "Creating Web App..."
+          az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group  ${{ env.rgName }} --runtime ASPNET:V4.8
+
+      #- name: Deploy Infrastructure using Bicep
+      #  run: |
+      #    az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }}
 
   build:
     needs: iac

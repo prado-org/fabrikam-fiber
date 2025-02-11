@@ -23,7 +23,7 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
   }
   properties: {
     siteConfig: {
-      netFrameworkVersion: 'v4.0'
+      netFrameworkVersion: 'v4.8'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'FtpsOnly'
