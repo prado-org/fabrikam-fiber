@@ -42,7 +42,7 @@ jobs:
 
       - name: Create Environment
         run: |
-          Write-Output "\nService plan..."
+          Write-Output "`nService plan..."
           $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
 
           if ($planExists -ne "")
@@ -55,7 +55,7 @@ jobs:
             az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
           }
 
-          Write-Output "\nWeb App..."
+          Write-Output "`nWeb App..."
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
 
           if ($webAppExists -ne "") 
@@ -68,7 +68,7 @@ jobs:
             az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
           }
 
-          Write-Output "\nSql Server..."
+          Write-Output "`nSql Server..."
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
 
           if ($sqlServerExists -ne "") 
@@ -81,7 +81,7 @@ jobs:
             az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
           }
           
-          Write-Output "\nSql Server Database..."
+          Write-Output "`nSql Server Database..."
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
 
           if ($sqlDbExists -ne "") 
@@ -94,7 +94,7 @@ jobs:
             az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
           }
 
-
+      # NOTA: não sei porq mas o bicep não esta criando uma webapp para asp net mvc 4.8
       #- name: Deploy Infrastructure using Bicep
       #  run: |
       #    az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }}
