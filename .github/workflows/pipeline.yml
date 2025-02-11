@@ -6,8 +6,42 @@ on:
   #    - master
   workflow_dispatch:
 
+env:
+  rgName: rg-fabrikamfiber-qa
+  location: eastus
+
 jobs:
+  iac:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: Azure/login@v2
+        with:
+          creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
+      
+      - name: Check and Create Resource Group
+        run: |
+          $rgExists = az group exists --name ${{ env.rgName }}
+
+          if ($rgExists -eq 'true') 
+          {
+            Write-Output "Resource group ${{ env.rgName }} already exists."
+          } 
+          else 
+          {
+            Write-Output "Resource group ${{ env.rgName }} does not exist. Creating..."
+            az group create --name ${{ env.rgName }} --location ${{ env.location }}
+          }
+
+      - name: Deploy Infrastructure using Bicep
+        run: |
+          az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep
+
   build:
+    needs: iac
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -78,31 +112,3 @@ jobs:
           resource-group-name: rg-fabrikamfiber-qa
           app-name: app-fabrikamfiber-qa
           package: "_PublishedWebsites/FabrikamFiber.Web.zip"
-
-  deploy_prod:
-    needs: deploy_qa
-    runs-on: windows-latest
-    environment: PROD
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-      
-      - name: View files
-        run: |
-          ls -R
-
-      - name: Azure Login
-        uses: Azure/login@v2
-        with:
-          creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
-
-      #- name: Deploy DacPac to Azure SQL
-      #  run: |
-      #    & "C:\Program Files\Microsoft SQL Server\150\Dac\bin\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
-
-      #- name: Deploy APP
-      #  uses: azure/webapps-deploy@v3
-      #  with:
-      #    resource-group-name: rg-fabrikamfiber-qa
-      #    app-name: app-fabrikamfiber-qa
-      #    package: "_PublishedWebsites/FabrikamFiber.Web.zip"
