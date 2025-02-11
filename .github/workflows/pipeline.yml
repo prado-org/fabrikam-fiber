@@ -52,17 +52,12 @@ jobs:
     runs-on: windows-latest
     environment: QA
     steps:
-      - name: Download WebApp
+      - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: WebApp
-          path: ./WebApp
-
-      - name: Download DacPac
-        uses: actions/download-artifact@v4
-        with:
-          name: DacPac
-          path: ./DACPAC
+      
+      - name: View files
+        run: |
+          ls -R
 
       - name: Deploy to QA
         run: |
