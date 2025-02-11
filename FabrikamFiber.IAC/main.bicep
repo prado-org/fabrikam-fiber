@@ -31,6 +31,14 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'CURRENT_STACK'
           value: 'dotnet'
         }
+        {
+          name: 'WEBSITE_STACK'
+          value: 'dotnet'
+        }
+        {
+          name: 'WEBSITE_NET_FRAMEWORK_VERSION'
+          value: 'v4.8'
+        }
       ]
     }
     serverFarmId: asp.id
