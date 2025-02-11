@@ -62,10 +62,15 @@ jobs:
         uses: Azure/login@v2
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
+      
+      - name: Install SqlPackage
+        run: |
+          Invoke-WebRequest -Uri "https://aka.ms/sqlpackage-windows" -OutFile "sqlpackage.zip"
+          Expand-Archive -Path "sqlpackage.zip" -DestinationPath "${{ github.workspace }}\sqlpackage"
 
       - name: Deploy DacPac to Azure SQL
         run: |
-          & "C:\Program Files\Microsoft SQL Server\150\Dac\bin\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
+          & "${{ github.workspace }}\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
 
       - name: Deploy APP
         uses: azure/webapps-deploy@v3
