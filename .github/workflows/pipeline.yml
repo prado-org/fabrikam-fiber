@@ -64,7 +64,7 @@ jobs:
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
       
-      - name: Deploy API
+      - name: Deploy APP
         uses: azure/webapps-deploy@v3
         with:
           resource-group-name: rg-fabrikamfiber-qa
@@ -76,19 +76,21 @@ jobs:
     runs-on: windows-latest
     environment: PROD
     steps:
-      - name: Download WebApp
+      - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: WebApp
-          path: ./WebApp
-
-      - name: Download DacPac
-        uses: actions/download-artifact@v4
-        with:
-          name: DacPac
-          path: ./DACPAC
-
-      - name: Deploy to PROD
+      
+      - name: View files
         run: |
-          echo "Exemplo de implantação .NET Framework 4.8 em PROD..."
-          # Scripts de PowerShell/MSBuild/etc. para IIS e SQL
+          ls -R
+
+      - name: Azure Login
+        uses: Azure/login@v2
+        with:
+          creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
+      
+      #- name: Deploy APP
+      #  uses: azure/webapps-deploy@v3
+      #  with:
+      #    resource-group-name: rg-fabrikamfiber-qa
+      #    app-name: app-fabrikamfiber-qa
+      #    package: "WebApp"
