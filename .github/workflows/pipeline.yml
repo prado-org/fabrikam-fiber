@@ -23,8 +23,14 @@ jobs:
         run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ github.workspace }}\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
 
       - name: Run Tests
+        uses: microsoft/vstest-action@v1.0.0
+        with:
+          testAssembly: FabrikamFiber.Web.Tests.dll
+          searchFolder: ${{ github.workspace }}\FabrikamFiber.Web.Tests\bin\Release\
+
+      - name: Run Tests
         run: |
-          "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/Common7/IDE/Extensions/TestPlatform/vstest.console.exe" ${{ github.workspace }}\FabrikamFiber.Web.Tests\bin\Release\FabrikamFiber.Web.Tests.dll /TestCaseFilter:"TestCategory=Required" /EnableCodeCoverage
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" "$($env:GITHUB_WORKSPACE)\FabrikamFiber.Web.Tests\bin\Release\FabrikamFiber.Web.Tests.dll" /TestCaseFilter:"TestCategory=Required" /EnableCodeCoverage
 
       - name: Archive WebDeploy
         uses: actions/upload-artifact@v4
