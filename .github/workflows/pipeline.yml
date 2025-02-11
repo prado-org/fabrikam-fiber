@@ -19,8 +19,11 @@ jobs:
       - name: Restore NuGet Packages
         run: nuget restore FabrikamFiber.CallCenter.sln
 
+      #- name: Build Solution
+      #  run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ github.workspace }}\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
+
       - name: Build Solution
-        run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ github.workspace }}\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
+        run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:OutDir="${{ github.workspace }}\WebDeploy"
 
       - name: Run Tests
         run: |
