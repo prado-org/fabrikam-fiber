@@ -42,7 +42,8 @@ jobs:
 
       - name: Create Environment
         run: |
-          Write-Output "`nService plan..."
+          Write-Output ""
+          Write-Output "Service plan..."
           $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
 
           if ($planExists)
@@ -55,7 +56,9 @@ jobs:
             az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
           }
 
-          Write-Output "`nWeb App..."
+          Write-Output ""
+          Start-Sleep -Seconds 10
+          Write-Output "Web App..."
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
 
           if ($webAppExists) 
@@ -68,7 +71,9 @@ jobs:
             az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
           }
 
-          Write-Output "`nSql Server..."
+          Write-Output ""
+          Start-Sleep -Seconds 10
+          Write-Output "Sql Server..."
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
 
           if ($sqlServerExists) 
@@ -81,7 +86,9 @@ jobs:
             az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
           }
           
-          Write-Output "`nSql Server Database..."
+          Write-Output ""
+          Start-Sleep -Seconds 10
+          Write-Output "Sql Server Database..."
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
 
           if ($sqlDbExists) 
