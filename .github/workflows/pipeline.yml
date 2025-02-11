@@ -59,10 +59,17 @@ jobs:
         run: |
           ls -R
 
-      - name: Deploy to QA
-        run: |
-          echo "Exemplo de implantação .NET Framework 4.8 em QA..."
-          # Scripts de PowerShell/MSBuild/etc. para IIS e SQL
+      - name: Azure Login
+        uses: Azure/login@v2
+        with:
+          creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
+      
+      - name: Deploy API
+        uses: azure/webapps-deploy@v3
+        with:
+          resource-group-name: rg-fabrikamfiber-qa
+          app-name: app-fabrikamfiber-qa
+          package: "WebApp/FabrikamFiber.Web.zip"
 
   deploy_prod:
     needs: deploy_qa
