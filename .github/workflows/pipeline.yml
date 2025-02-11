@@ -70,6 +70,7 @@ jobs:
           resource-group-name: rg-fabrikamfiber-qa
           app-name: app-fabrikamfiber-qa
           package: "WebApp/FabrikamFiber.Web.zip"
+          type: ZIP
 
   deploy_prod:
     needs: deploy_qa
