@@ -32,23 +32,14 @@ jobs:
       - name: Archive WebDeploy
         uses: actions/upload-artifact@v4
         with:
-          name: WebApp
-          path: ${{ github.workspace }}\WebDeploy
+          name: _PublishedWebsites
+          path: ${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web\*
 
-      - name: Archive DACPAC
+      - name: Archive DacPac
         uses: actions/upload-artifact@v4
         with:
           name: DacPac
-          path: '**/FabrikamFiber.Database/bin/Release/*.dacpac'
-
-      - name: Archive Selenium Content
-        uses: actions/upload-artifact@v4
-        with:
-          name: Selenium
-          path: |
-            **/FabrikamFiber.Web.PureSeleniumTests/bin/Release/**
-            **/*.testsettings
-            **/*.runsettings
+          path: ${{ github.workspace }}\WebDeploy\*.dacpac
 
   deploy_qa:
     needs: build
