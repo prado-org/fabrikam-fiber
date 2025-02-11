@@ -45,7 +45,7 @@ jobs:
           Write-Output "`nService plan..."
           $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
 
-          if ($planExists -ne "")
+          if ($planExists)
           {
             Write-Output "Service plan ${{ env.planName }} already exists."
           } 
@@ -58,7 +58,7 @@ jobs:
           Write-Output "`nWeb App..."
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
 
-          if ($webAppExists -ne "") 
+          if ($webAppExists) 
           {
             Write-Output "Web App ${{ env.appName }} already exists."
           } 
@@ -71,7 +71,7 @@ jobs:
           Write-Output "`nSql Server..."
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
 
-          if ($sqlServerExists -ne "") 
+          if ($sqlServerExists) 
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
           } 
@@ -84,7 +84,7 @@ jobs:
           Write-Output "`nSql Server Database..."
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
 
-          if ($sqlDbExists -ne "") 
+          if ($sqlDbExists) 
           {
             Write-Output "SQL Database ${{ env.sqldbName }} already exists."
           } 
