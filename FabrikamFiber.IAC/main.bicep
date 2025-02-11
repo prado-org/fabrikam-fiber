@@ -1,4 +1,4 @@
-param webAppName string = 'app-fabrikamfiber-qa'
+param webAppName string = 'app-fabrikamfiber'
 
 param location string = resourceGroup().location
 
@@ -23,7 +23,7 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
   }
   properties: {
     siteConfig: {
-      netFrameworkVersion: 'v4.8'
+      netFrameworkVersion: 'v4.0'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'FtpsOnly'

@@ -9,6 +9,7 @@ on:
 env:
   rgName: rg-fabrikamfiber-qa
   location: eastus
+  appName: app-fabrikamfiber-qa
 
 jobs:
   iac:
@@ -38,7 +39,7 @@ jobs:
 
       - name: Deploy Infrastructure using Bicep
         run: |
-          az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep
+          az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }}
 
   build:
     needs: iac
@@ -53,9 +54,6 @@ jobs:
       - name: Restore NuGet Packages
         run: nuget restore FabrikamFiber.CallCenter.sln
 
-      #- name: Build Solution
-      #  run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ github.workspace }}\WebDeploy" /p:AutoParameterizationWebConfigConnectionStrings=false
-
       - name: Build Solution
         run: msbuild FabrikamFiber.CallCenter.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:OutDir="${{ github.workspace }}\WebDeploy"
 
@@ -63,7 +61,6 @@ jobs:
         run: |
           & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" "${{ github.workspace }}\WebDeploy\FabrikamFiber.Web.Tests.dll" /TestCaseFilter:"TestCategory=Required" /EnableCodeCoverage
       
-
       - name: Zip Published Website
         run: |
           Compress-Archive -Path "${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web\*" -DestinationPath "${{ github.workspace }}\WebDeploy\_PublishedWebsites\FabrikamFiber.Web.zip"
@@ -109,6 +106,6 @@ jobs:
       - name: Deploy APP
         uses: azure/webapps-deploy@v3
         with:
-          resource-group-name: rg-fabrikamfiber-qa
-          app-name: app-fabrikamfiber-qa
+          resource-group-name: ${{ env.rgName }}
+          app-name: ${{ env.appName }}
           package: "_PublishedWebsites/FabrikamFiber.Web.zip"
