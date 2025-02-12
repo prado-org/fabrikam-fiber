@@ -60,7 +60,8 @@ jobs:
         run: |
           Write-Output "Web App..."
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
-
+          Write-Output "Web App Exists: $webAppExists"
+          
           if ($webAppExists) 
           {
             Write-Output "Web App ${{ env.appName }} already exists."
@@ -75,7 +76,8 @@ jobs:
         run: |
           Write-Output "Sql Server..."
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
-
+          Write-Output "Sql Server Exists: $sqlServerExists"
+          
           if ($sqlServerExists) 
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
@@ -90,7 +92,8 @@ jobs:
         run: |
           Write-Output "Sql Server Database..."
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
-
+          Write-Output "Sql Server Database Exists: $sqlDbExists"
+          
           if ($sqlDbExists) 
           {
             Write-Output "SQL Database ${{ env.sqldbName }} already exists."
