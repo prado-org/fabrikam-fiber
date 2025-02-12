@@ -33,8 +33,8 @@ jobs:
           if ($rgExists -eq 'true') 
           {
             Write-Output "Resource group ${{ env.rgName }} already exists."
-          } 
-          else 
+          }
+          else
           {
             Write-Output "Resource group ${{ env.rgName }} does not exist. Creating..."
             az group create --name ${{ env.rgName }} --location ${{ env.location }}
@@ -49,8 +49,8 @@ jobs:
           if ($planExists)
           {
             Write-Output "Service plan ${{ env.planName }} already exists."
-          } 
-          else 
+          }
+          else
           {
             Write-Output "Service plan ${{ env.planName }} does not exist. Creating..."
             az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
@@ -65,8 +65,8 @@ jobs:
           if ($webAppExists) 
           {
             Write-Output "Web App ${{ env.appName }} already exists."
-          } 
-          else 
+          }
+          else
           {
             Write-Output "Web App ${{ env.appName }} does not exist. Creating..."
             az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
@@ -81,8 +81,8 @@ jobs:
           if ($sqlServerExists) 
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
-          } 
-          else 
+          }
+          else
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
             az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
@@ -97,8 +97,8 @@ jobs:
           if ($sqlDbExists) 
           {
             Write-Output "SQL Database ${{ env.sqldbName }} already exists."
-          } 
-          else 
+          }
+          else
           {
             Write-Output "SQL Database ${{ env.sqldbName }} does not exist. Creating..."
             az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
