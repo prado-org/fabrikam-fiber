@@ -192,13 +192,13 @@ jobs:
               {
                 "name": "FabrikamFiber-Express",
                 "value": "${{ env.DB_CONNECTION_STRING }}",
-                "type": "SQLAzure"
+                "type": "SQLAzure",
                 "slotSetting": false
               },
               {
                 "name": "FabrikamFiber-DataWarehouse",
                 "value": "${{ env.DB_CONNECTION_STRING }}",
-                "type": "SQLAzure"
+                "type": "SQLAzure",
                 "slotSetting": false
               }
             ]
