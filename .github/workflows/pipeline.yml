@@ -163,7 +163,8 @@ jobs:
 
       - name: View SQL Connection String
         run: |
-          Write-Output "SQL Connection String = ${{ env.DB_CONNECTION_STRING }}"
+          Write-Output "SQL Connection String 1 = ${{ env.DB_CONNECTION_STRING }}"
+          Write-Output "SQL Connection String 2 = $DB_CONNECTION_STRING"
 
       - name: Azure Login
         uses: Azure/login@v2
