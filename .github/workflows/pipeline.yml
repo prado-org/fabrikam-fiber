@@ -30,7 +30,7 @@ jobs:
         run: |
           $rgExists = az group exists --name ${{ env.rgName }}
 
-          if ($rgExists -eq 'true') 
+          if ($rgExists -eq 'true')
           {
             Write-Output "Resource group ${{ env.rgName }} already exists."
           }
@@ -62,7 +62,7 @@ jobs:
           $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
           Write-Output "Web App Exists: $webAppExists"
           
-          if ($webAppExists) 
+          if ($webAppExists)
           {
             Write-Output "Web App ${{ env.appName }} already exists."
           }
@@ -78,7 +78,7 @@ jobs:
           $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
           Write-Output "Sql Server Exists: $sqlServerExists"
           
-          if ($sqlServerExists) 
+          if ($sqlServerExists)
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
           }
@@ -94,7 +94,7 @@ jobs:
           $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
           Write-Output "Sql Server Database Exists: $sqlDbExists"
           
-          if ($sqlDbExists) 
+          if ($sqlDbExists)
           {
             Write-Output "SQL Database ${{ env.sqldbName }} already exists."
           }
@@ -149,6 +149,8 @@ jobs:
     needs: build
     runs-on: windows-latest
     environment: QA
+    env:
+      DB_CONNECTION_STRING: "Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=db-fabrikamfiber;Persist Security Info=False;User ID=fabrikamfiber-sql;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -169,7 +171,7 @@ jobs:
 
       - name: Deploy DacPac to Azure SQL
         run: |
-          & "${{ github.workspace }}\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ secrets.DB_CONNECTION_STRING }}"
+          & "${{ github.workspace }}\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ env.DB_CONNECTION_STRING }}"
 
       - name: Deploy APP
         uses: azure/webapps-deploy@v3
