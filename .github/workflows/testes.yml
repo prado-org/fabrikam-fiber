@@ -17,7 +17,8 @@ jobs:
     steps:
       - name: Create Connection String
         run: |
-          Write-Output "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
+          $connectionString = "Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          Write-Output "DB_CONNECTION_STRING=$connectionString" >> $GITHUB_ENV
 
       - name: View SQL Connection String
         run: |
