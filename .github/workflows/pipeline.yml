@@ -40,74 +40,6 @@ jobs:
             az group create --name ${{ env.rgName }} --location ${{ env.location }}
           }
 
-      # - name: Create Service Plan
-      #   run: |
-      #     Write-Output "Service plan..."
-      #     $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
-      #     Write-Output "Plan Exists: $planExists"
-
-      #     if ($planExists)
-      #     {
-      #       Write-Output "Service plan ${{ env.planName }} already exists."
-      #     }
-      #     else
-      #     {
-      #       Write-Output "Service plan ${{ env.planName }} does not exist. Creating..."
-      #       az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
-      #     }
-
-      # - name: Create Web App
-      #   run: |
-      #     Write-Output "Web App..."
-      #     $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
-      #     Write-Output "Web App Exists: $webAppExists"
-          
-      #     if ($webAppExists)
-      #     {
-      #       Write-Output "Web App ${{ env.appName }} already exists."
-      #     }
-      #     else
-      #     {
-      #       Write-Output "Web App ${{ env.appName }} does not exist. Creating..."
-      #       az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
-      #     }
-
-      # - name: Create SQL Server
-      #   run: |
-      #     Write-Output "Sql Server..."
-      #     $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
-      #     Write-Output "Sql Server Exists: $sqlServerExists"
-          
-      #     if ($sqlServerExists)
-      #     {
-      #       Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
-      #     }
-      #     else
-      #     {
-      #       Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
-      #       az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "${{ secrets.SQL_USER }}" --admin-password "${{ secrets.SQL_PASSWORD }}"
-      #     }
-      
-      # - name: Configure SQL Server Firewall
-      #   run: |
-      #     az sql server firewall-rule create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name AllowYourIPRange --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
-            
-      # - name: Create SQL Server database
-      #   run: |
-      #     Write-Output "Sql Server Database..."
-      #     $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
-      #     Write-Output "Sql Server Database Exists: $sqlDbExists"
-          
-      #     if ($sqlDbExists)
-      #     {
-      #       Write-Output "SQL Database ${{ env.sqldbName }} already exists."
-      #     }
-      #     else
-      #     {
-      #       Write-Output "SQL Database ${{ env.sqldbName }} does not exist. Creating..."
-      #       az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
-      #     }
-
       - name: Deploy Infrastructure using Bicep
         run: |
           az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }} location=${{ env.location }} appServicePlanName=${{ env.planName }} sqlserverName=${{ env.sqlserverName }} databaseName=${{ env.sqldbName }} sqlAdministratorLogin=${{ secrets.SQL_USER }} sqlAdministratorLoginPassword=${{ secrets.SQL_PASSWORD }}
@@ -175,20 +107,6 @@ jobs:
         uses: Azure/login@v2
         with:
           creds: ${{ secrets.ORG_AZ_CREDENTIALS }}
-      
-      #- name: Install SqlPackage
-      #  run: |
-      #    Invoke-WebRequest -Uri "https://aka.ms/sqlpackage-windows" -OutFile "sqlpackage.zip"
-      #    Expand-Archive -Path "sqlpackage.zip" -DestinationPath "${{ github.workspace }}\sqlpackage"
-
-      # https://github.com/azure/sql-action
-      #- name: Deploy DacPac to Azure SQL
-      #  run: |
-      #    & "${{ github.workspace }}\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ env.DB_CONNECTION_STRING }}"
-      
-      #- name: Execute SQL Script
-      #  run: |
-      #    Invoke-Sqlcmd -ConnectionString "${{ env.DB_CONNECTION_STRING }}" -InputFile "scripts\insert-data.sql"
       
       - name: Deploy DacPac to Azure SQL
         uses: azure/sql-action@v2.3
