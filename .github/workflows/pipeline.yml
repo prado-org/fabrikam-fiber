@@ -159,12 +159,13 @@ jobs:
       
       - name: Create Connection String
         run: |
-          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
+          $connectionString = "Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          Write-Output "DB_CONNECTION_STRING=$connectionString" >> $env:GITHUB_ENV
 
       - name: View SQL Connection String
         run: |
           Write-Output "SQL Connection String 1 = ${{ env.DB_CONNECTION_STRING }}"
-          Write-Output "SQL Connection String 2 = $DB_CONNECTION_STRING"
+          Write-Output "SQL Connection String 2 = $env:DB_CONNECTION_STRING"
 
       - name: Azure Login
         uses: Azure/login@v2
