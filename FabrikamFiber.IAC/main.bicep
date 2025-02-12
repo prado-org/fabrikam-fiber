@@ -4,7 +4,7 @@ param location string = resourceGroup().location
 
 param sku string = 'S1'
 
-var appServicePlanName = 'asp-fabrikamfiber'
+param appServicePlanName string = 'asp-fabrikamfiber'
 
 param sqlserverName string = 'sql-fabrikamfiber'
 
