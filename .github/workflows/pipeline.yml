@@ -232,8 +232,8 @@ jobs:
           app-settings-json: |
             [
               {
-                "name": "VersionInfo__Number",
-                "value": "1.0.${{ github.run_number }}",
+                "name": "Ambiente",
+                "value": "QA - Build Number: ${{ github.run_number }}",
                 "slotSetting": false
               }
             ]
