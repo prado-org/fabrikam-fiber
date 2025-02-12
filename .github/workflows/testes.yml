@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Create Connection String
         run: |
-          echo "DB_CONNECTION_STRING=Server" >> $GITHUB_ENV
+          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
 
       - name: View SQL Connection String
         run: |
@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Create Connection String
         run: |
-          echo "DB_CONNECTION_STRING=Server" >> $GITHUB_ENV
+          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
 
       - name: View SQL Connection String
         run: |
