@@ -188,7 +188,7 @@ jobs:
       
       - name: Execute SQL Script
         run: |
-          Invoke-Sqlcmd -ConnectionString "${{ env.DB_CONNECTION_STRING }}" -InputFile "scripts/insert-data.sql"
+          Invoke-Sqlcmd -ConnectionString "${{ env.DB_CONNECTION_STRING }}" -InputFile "scripts\insert-data.sql"
       
       - name: Deploy APP
         uses: azure/webapps-deploy@v3
