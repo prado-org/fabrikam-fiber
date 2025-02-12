@@ -85,7 +85,7 @@ jobs:
           else
           {
             Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
-            az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "fabrikamfiber-sql" --admin-password "#P@ssw0rd2025#"
+            az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "${{ secrets.SQL_USER }}" --admin-password "${{ secrets.SQL_PASSWORD }}"
           }
       
       - name: Create SQL Server database
@@ -159,7 +159,11 @@ jobs:
       
       - name: Create Connection String
         run: |
-          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=fabrikamfiber-sql;Password=#P@ssw0rd2025#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
+          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
+
+      - name: View SQL Connection String
+        run: |
+          Write-Output "SQL Connection String = ${{ env.DB_CONNECTION_STRING }}"
 
       - name: Azure Login
         uses: Azure/login@v2
