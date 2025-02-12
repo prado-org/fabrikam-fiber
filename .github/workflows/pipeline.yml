@@ -44,6 +44,7 @@ jobs:
         run: |
           Write-Output "Service plan..."
           $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
+          Write-Output "Plan Exists: $planExists"
 
           if ($planExists)
           {
