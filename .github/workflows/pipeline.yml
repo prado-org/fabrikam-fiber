@@ -40,78 +40,77 @@ jobs:
             az group create --name ${{ env.rgName }} --location ${{ env.location }}
           }
 
-      - name: Create Service Plan
-        run: |
-          Write-Output "Service plan..."
-          $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
-          Write-Output "Plan Exists: $planExists"
+      # - name: Create Service Plan
+      #   run: |
+      #     Write-Output "Service plan..."
+      #     $planExists = az appservice plan list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.planName }}'].name" --output tsv
+      #     Write-Output "Plan Exists: $planExists"
 
-          if ($planExists)
-          {
-            Write-Output "Service plan ${{ env.planName }} already exists."
-          }
-          else
-          {
-            Write-Output "Service plan ${{ env.planName }} does not exist. Creating..."
-            az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
-          }
+      #     if ($planExists)
+      #     {
+      #       Write-Output "Service plan ${{ env.planName }} already exists."
+      #     }
+      #     else
+      #     {
+      #       Write-Output "Service plan ${{ env.planName }} does not exist. Creating..."
+      #       az appservice plan create --name ${{ env.planName }} --resource-group ${{ env.rgName }} --sku B1
+      #     }
 
-      - name: Create Web App
-        run: |
-          Write-Output "Web App..."
-          $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
-          Write-Output "Web App Exists: $webAppExists"
+      # - name: Create Web App
+      #   run: |
+      #     Write-Output "Web App..."
+      #     $webAppExists = az webapp list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.appName }}'].name" --output tsv
+      #     Write-Output "Web App Exists: $webAppExists"
           
-          if ($webAppExists)
-          {
-            Write-Output "Web App ${{ env.appName }} already exists."
-          }
-          else
-          {
-            Write-Output "Web App ${{ env.appName }} does not exist. Creating..."
-            az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
-          }
+      #     if ($webAppExists)
+      #     {
+      #       Write-Output "Web App ${{ env.appName }} already exists."
+      #     }
+      #     else
+      #     {
+      #       Write-Output "Web App ${{ env.appName }} does not exist. Creating..."
+      #       az webapp create --name ${{ env.appName }} --plan ${{ env.planName }} --resource-group ${{ env.rgName }} --runtime "ASPNET:V4.8"
+      #     }
 
-      - name: Create SQL Server
-        run: |
-          Write-Output "Sql Server..."
-          $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
-          Write-Output "Sql Server Exists: $sqlServerExists"
+      # - name: Create SQL Server
+      #   run: |
+      #     Write-Output "Sql Server..."
+      #     $sqlServerExists = az sql server list --resource-group ${{ env.rgName }} --query "[?name=='${{ env.sqlserverName }}'].name" --output tsv
+      #     Write-Output "Sql Server Exists: $sqlServerExists"
           
-          if ($sqlServerExists)
-          {
-            Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
-          }
-          else
-          {
-            Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
-            az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "${{ secrets.SQL_USER }}" --admin-password "${{ secrets.SQL_PASSWORD }}"
-          }
+      #     if ($sqlServerExists)
+      #     {
+      #       Write-Output "SQL Server ${{ env.sqlserverName }} already exists."
+      #     }
+      #     else
+      #     {
+      #       Write-Output "SQL Server ${{ env.sqlserverName }} does not exist. Creating..."
+      #       az sql server create --name ${{ env.sqlserverName }} --resource-group ${{ env.rgName }} --location ${{ env.location }} --admin-user "${{ secrets.SQL_USER }}" --admin-password "${{ secrets.SQL_PASSWORD }}"
+      #     }
       
-      - name: Configure SQL Server Firewall
-        run: |
-          az sql server firewall-rule create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name AllowYourIPRange --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
+      # - name: Configure SQL Server Firewall
+      #   run: |
+      #     az sql server firewall-rule create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name AllowYourIPRange --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
             
-      - name: Create SQL Server database
-        run: |
-          Write-Output "Sql Server Database..."
-          $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
-          Write-Output "Sql Server Database Exists: $sqlDbExists"
+      # - name: Create SQL Server database
+      #   run: |
+      #     Write-Output "Sql Server Database..."
+      #     $sqlDbExists = az sql db list --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --query "[?name=='${{ env.sqldbName }}'].name" --output tsv
+      #     Write-Output "Sql Server Database Exists: $sqlDbExists"
           
-          if ($sqlDbExists)
-          {
-            Write-Output "SQL Database ${{ env.sqldbName }} already exists."
-          }
-          else
-          {
-            Write-Output "SQL Database ${{ env.sqldbName }} does not exist. Creating..."
-            az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
-          }
+      #     if ($sqlDbExists)
+      #     {
+      #       Write-Output "SQL Database ${{ env.sqldbName }} already exists."
+      #     }
+      #     else
+      #     {
+      #       Write-Output "SQL Database ${{ env.sqldbName }} does not exist. Creating..."
+      #       az sql db create --resource-group ${{ env.rgName }} --server ${{ env.sqlserverName }} --name ${{ env.sqldbName }}
+      #     }
 
-      # NOTA: não sei porq mas o bicep não esta criando uma webapp para asp net mvc 4.8
-      #- name: Deploy Infrastructure using Bicep
-      #  run: |
-      #    az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }}
+      - name: Deploy Infrastructure using Bicep
+        run: |
+          az deployment group create --resource-group ${{ env.rgName }} --template-file FabrikamFiber.IAC/main.bicep --parameters webAppName=${{ env.appName }} location=${{ env.location }} appServicePlanName=${{ env.planName }} sqlserverName=${{ env.sqlserverName }} databaseName=${{ env.sqldbName }} sqlAdministratorLogin=${{ secrets.SQL_USER }} sqlAdministratorLoginPassword=${{ secrets.SQL_PASSWORD }}
 
   build:
     needs: iac
