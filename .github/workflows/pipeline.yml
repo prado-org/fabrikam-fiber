@@ -157,10 +157,6 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
       
-      - name: View files
-        run: |
-          ls -R
-      
       - name: Create Connection String
         run: |
           $connectionString = "Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
@@ -186,3 +182,31 @@ jobs:
           resource-group-name: ${{ env.rgName }}
           app-name: ${{ env.appName }}
           package: "_PublishedWebsites/FabrikamFiber.Web.zip"
+      
+      - name: Set APP Settings
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: ${{ env.appName }}
+          connection-strings-json: |
+            [
+              {
+                "name": "FabrikamFiber-Express",
+                "value": "${{ env.DB_CONNECTION_STRING }}",
+                "type": "SQLAzure"
+                "slotSetting": false
+              },
+              {
+                "name": "FabrikamFiber-DataWarehouse",
+                "value": "${{ env.DB_CONNECTION_STRING }}",
+                "type": "SQLAzure"
+                "slotSetting": false
+              }
+            ]
+          app-settings-json: |
+            [
+              {
+                "name": "VersionInfo__Number",
+                "value": "1.0.${{ github.run_number }}",
+                "slotSetting": false
+              }
+            ]
