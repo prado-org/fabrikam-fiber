@@ -149,8 +149,6 @@ jobs:
     needs: build
     runs-on: windows-latest
     environment: QA
-    env:
-      DB_CONNECTION_STRING: "Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=db-fabrikamfiber;Persist Security Info=False;User ID=fabrikamfiber-sql;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -158,6 +156,10 @@ jobs:
       - name: View files
         run: |
           ls -R
+      
+      - name: Create Connection String
+        run: |
+          echo "DB_CONNECTION_STRING='Server=tcp:${{ env.sqlserverName }}.database.windows.net,1433;Initial Catalog=${{ env.sqldbName }};Persist Security Info=False;User ID=fabrikamfiber-sql;Password=#P@ssw0rd2025#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'" >> $GITHUB_ENV
 
       - name: Azure Login
         uses: Azure/login@v2
