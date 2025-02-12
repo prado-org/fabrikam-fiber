@@ -15,6 +15,29 @@ env:
   sqldbName: db-fabrikamfiber
 
 jobs:
+  teste1:
+    runs-on: windows-latest
+    steps:
+      - name: Create Connection String
+        run: |
+          echo "DB_CONNECTION_STRING=Server" >> $GITHUB_ENV
+
+      - name: View SQL Connection String
+        run: |
+          Write-Output "SQL Connection String 1 = ${{ env.DB_CONNECTION_STRING }}"
+          Write-Output "SQL Connection String 2 = $DB_CONNECTION_STRING"
+  teste2:
+    runs-on: linux-latest
+    steps:
+      - name: Create Connection String
+        run: |
+          echo "DB_CONNECTION_STRING=Server" >> $GITHUB_ENV
+
+      - name: View SQL Connection String
+        run: |
+          Write-Output "SQL Connection String 1 = ${{ env.DB_CONNECTION_STRING }}"
+          Write-Output "SQL Connection String 2 = $DB_CONNECTION_STRING"
+
   iac:
     runs-on: windows-latest
     steps:
