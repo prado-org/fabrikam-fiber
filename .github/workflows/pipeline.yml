@@ -182,6 +182,7 @@ jobs:
           Invoke-WebRequest -Uri "https://aka.ms/sqlpackage-windows" -OutFile "sqlpackage.zip"
           Expand-Archive -Path "sqlpackage.zip" -DestinationPath "${{ github.workspace }}\sqlpackage"
 
+      # https://github.com/azure/sql-action
       - name: Deploy DacPac to Azure SQL
         run: |
           & "${{ github.workspace }}\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"${{ github.workspace }}\DacPac\FabrikamFiber.Database.dacpac" /TargetConnectionString:"${{ env.DB_CONNECTION_STRING }}"
